@@ -200,9 +200,9 @@ export function cardHtml(id, { sel = false, small = false, suitTypes = DEFAULT_S
 /** Magic Cards: spend 5 MP per card, discard the set, resolve one effect, draw back up */
 export async function resolveSet(actor, ids, effectId) {
 	const n = ids.length;
-	if (n < 2 || n > maxCards(actor)) return ui.notifications.warn(`Resolve 2 to ${maxCards(actor)} cards.`);
+	if (n < 2 || n > maxCards(actor)) return void ui.notifications.warn(`Resolve 2 to ${maxCards(actor)} cards.`);
 	const cost = n * 5;
-	if (mp(actor).value < cost) return ui.notifications.warn(`Not enough MP (${cost} needed).`);
+	if (mp(actor).value < cost) return void ui.notifications.warn(`Not enough MP (${cost} needed).`);
 	const options = setOptions(actor, ids);
 	const eff = options.find((o) => o.id === effectId) ?? null;
 	await actor.update({ 'system.resources.mp.value': mp(actor).value - cost });

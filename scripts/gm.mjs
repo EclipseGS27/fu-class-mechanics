@@ -114,13 +114,14 @@ const OPS = {
 		await sleep(50);
 		game.socket.emit(SOCKET, { type: 'popIn', tokenId: doc.id, sceneId: scene.id });
 		if (scene.id === canvas.scene?.id) (await import('./fx.mjs')).popIn(doc.id);
-		broadcastFx('vehicle', doc.id);
+		broadcastFx('vehicle', doc);
 		return { ok: true };
 	},
 
 	async dismissVehicle(pilot) {
-		for (const t of vehicleTokens(pilot)) {
-			broadcastFx('vehicleOut', t.id);
+		const pt = pilot.getActiveTokens(false, true)[0];
+		for (const t of vehicleTokens(pilot, pt?.parent ?? canvas.scene)) {
+			broadcastFx('vehicleOut', t);
 			await sleep(600);
 			await t.delete();
 		}
@@ -156,17 +157,20 @@ const OPS = {
 					flags: { [MODULE_ID]: { symbol: { by: symbolist.uuid, item: item.id, name: item.name } } },
 				},
 			]);
-			const tok = actor.getActiveTokens(false, true)[0];
-			if (tok) broadcastFx('symbol', tok.id);
+			const tok = target?.documentName === 'Token' ? target : actor.getActiveTokens(false, true)[0];
+			if (tok) broadcastFx('symbol', tok);
 		}
 		return { ok: true };
 	},
 
-	async destroySymbol(symbolist, p) {
+	async destroySymbol(symbolist, p, user) {
 		const effect = await fromUuid(p.effect);
 		if (!effect) return { ok: false };
+		// only symbols, and only the symbolist's own (the GM may clear any)
+		const f = effect.getFlag?.(MODULE_ID, 'symbol');
+		if (!f || (!user?.isGM && f.by !== symbolist?.uuid)) return { ok: false, message: 'That is not one of your symbols.' };
 		const tok = effect.parent?.getActiveTokens?.(false, true)[0];
-		if (tok) broadcastFx('dismiss', tok.id, 0xf2c45a);
+		if (tok) broadcastFx('dismiss', tok, 0xf2c45a);
 		await effect.delete();
 		return { ok: true };
 	},
@@ -182,11 +186,17 @@ export function installVehicleHooks() {
 		const v = changed.system?.vehicle;
 		if (!v) return;
 		if ('vehicle' in v && !v.vehicle && setting('autoDismiss') !== false) return OPS.dismissVehicle(actor);
+		// switched to another vehicle while one is on the map: swap the token
+		if ('vehicle' in v && v.vehicle && vehicleTokens(actor).length) {
+			await OPS.dismissVehicle(actor);
+			await OPS.summonVehicle(actor, {});
+			return;
+		}
 		if ('embarked' in v) {
 			if (v.embarked && setting('autoPlace') !== false) {
 				await OPS.summonVehicle(actor, {});
 				const t = actor.getActiveTokens(false, true)[0];
-				if (t) broadcastFx('vehicle', t.id);
+				if (t) broadcastFx('vehicle', t);
 			} else if (vehicleTokens(actor).length) await OPS.followPilot(actor);
 		}
 	});

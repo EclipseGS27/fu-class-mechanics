@@ -18,7 +18,7 @@ Open it with **Class mechanics** in a character sheet header, or the diamond but
 - **Chanter**: keys, tones and verses; Perform opens Project FU's verse composer.
 - **Dancer**: dance (posts it, sparkles on the token) and keep track of the current dance until you end it.
 - **Gourmet**: taste totals, ingredient quantities (+ / −), and Cook opens Project FU's cooking window.
-- **Merchant**: Trade Points (+ / −) with the Winds of Trade reminder, and a link to Fabula Ultima Shop & Economy when it's installed.
+- **Merchant**: Trade Points (+ / −, **Rested** for the SL + 1 gained after resting, **Spend 2** with a chat note), capped at SL + 3, the Winds of Trade options, and a link to Fabula Ultima Shop & Economy when it is installed.
 - **Mutant**: transform and revert therioforms, with a flash on the token and the form posted to chat.
 - **Pilot**: activate a vehicle, embark and disembark, and equip modules.
   - **Put on the map** places the vehicle as its own token next to the pilot, with an arrival animation. Mechs are 2×2.

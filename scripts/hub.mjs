@@ -321,17 +321,23 @@ export class ClassHub extends ApplicationV2 {
 	#merchant(a) {
 		const w = skill(a, 'winds-of-trade');
 		const cur = num(w?.system?.rp?.current);
-		const max = num(w?.system?.rp?.max);
-		return `${w ? `<div class="big"><span>Trade Points</span><b>${cur}</b>${max ? `<small>/ ${max}</small>` : ''}<button type="button" data-action="tp" data-n="-1">−</button><button type="button" data-action="tp" data-n="1">+</button></div>
-			<p class="muted">Winds of Trade (SL ${num(w.system?.level?.value, 1)}): spend 2 Trade Points for a rare item worth up to ${level(a) * 30} zenit.</p>` : '<p class="muted">No Winds of Trade skill.</p>'}
+		const sl = num(w?.system?.level?.value, 1);
+		const max = num(w?.system?.rp?.max) || sl + 3;
+		return `${w ? `<div class="big"><span>Trade Points</span><b>${cur}</b><small>/ ${max}</small><button type="button" data-action="tp" data-n="-1">−</button><button type="button" data-action="tp" data-n="1">+</button>
+				<button type="button" data-action="tp" data-n="${sl + 1}" data-tooltip="After resting where commerce is possible">Rested (+${sl + 1})</button>
+				<button type="button" class="cta" data-action="tp" data-n="-2" ${cur < 2 ? 'disabled' : ''} data-tooltip="Non-conflict scenes only">Spend 2</button></div>
+			<p class="muted">Winds of Trade (SL ${sl}): gain ${sl + 1} after resting where commerce is possible (never more than ${sl + 3}). In a non-conflict scene, spend 2 to create a material or rare item the GM approves, worth up to ${level(a) * 30} zenit, or a nearby NPC contact (the GM says what they want in exchange).</p>` : '<p class="muted">No Winds of Trade skill.</p>'}
 			${game.modules.get('fu-shopmenu')?.active ? '<button type="button" class="cta" data-action="shop"><i class="fa-solid fa-store"></i> Shops</button>' : ''}
 			${this.#list(a, [], '')}`;
 	}
 	static async #tp(e, t) {
 		const w = skill(this.actor, 'winds-of-trade');
 		if (!w) return;
-		const max = num(w.system?.rp?.max) || 99;
-		await w.update({ 'system.rp.current': Math.max(0, Math.min(max, num(w.system?.rp?.current) + num(t.dataset.n))) });
+		const max = num(w.system?.rp?.max) || num(w.system?.level?.value, 1) + 3;
+		const n = num(t.dataset.n);
+		const now = Math.max(0, Math.min(max, num(w.system?.rp?.current) + n));
+		await w.update({ 'system.rp.current': now });
+		if (n === -2) chat(this.actor, `<h3>Winds of Trade</h3><p>${esc(this.actor.name)} spends 2 Trade Points (${now} left): a material or rare item worth up to ${level(this.actor) * 30} zenit, or a useful contact nearby.</p>`);
 	}
 
 	/* ---------- Mutant ---------- */

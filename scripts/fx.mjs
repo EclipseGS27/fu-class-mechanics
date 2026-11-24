@@ -80,12 +80,13 @@ export function playFx(kind, tokenId, color) {
 	canvas.app.ticker.add(tick);
 }
 
-/** Play on every client */
+/** Play on every client viewing the token's scene (token: a Token, a TokenDocument or a token id on this scene) */
 export function broadcastFx(kind, token, color) {
 	const id = token?.id ?? token;
 	if (!id) return;
-	playFx(kind, id, color);
-	game.socket.emit(SOCKET, { type: 'fx', kind, tokenId: id, sceneId: canvas.scene?.id, color });
+	const sceneId = token?.parent?.id ?? token?.document?.parent?.id ?? canvas.scene?.id;
+	if (sceneId === canvas.scene?.id) playFx(kind, id, color);
+	game.socket.emit(SOCKET, { type: 'fx', kind, tokenId: id, sceneId, color });
 }
 
 export function onFxSocket(msg) {

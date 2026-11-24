@@ -15,8 +15,12 @@ export const setting = (key) => {
 	}
 };
 
-/** Project FU class feature subtype, e.g. "projectfu.vehicle" → "vehicle" */
-export const featureType = (item) => String(item?._source?.system?.data?.type ?? item?.system?.data?.type ?? '').replace(/^projectfu\./, '');
+/**
+ * Project FU class feature subtype, e.g. "projectfu.vehicle" → "vehicle".
+ * Project FU 4.x keeps it in system.featureType (data.type can be the feature's own field, e.g. a weapon
+ * module's "melee"); 5.x moved it to system.data.type.
+ */
+export const featureType = (item) => String(item?.system?.featureType ?? item?._source?.system?.featureType ?? item?._source?.system?.data?.type ?? item?.system?.data?.type ?? '').replace(/^projectfu\./, '');
 export const features = (actor, type) => (actor?.items?.contents ?? []).filter((i) => i.type === 'classFeature' && featureType(i) === type);
 export const classLevel = (actor, fuid) => {
 	const c = (actor?.items?.contents ?? []).find((i) => i.type === 'class' && (i.system?.fuid === fuid || i.name.toLowerCase() === fuid));

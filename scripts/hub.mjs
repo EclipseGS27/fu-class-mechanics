@@ -31,7 +31,7 @@ export class ClassHub extends ApplicationV2 {
 		window: { title: 'Class mechanics', icon: 'fa-solid fa-diamond', resizable: true },
 		position: { width: 720, height: 680 },
 		actions: {
-			tab: ClassHub.#tab,
+			pickTab: ClassHub.#tab,
 			roll: ClassHub.#roll,
 			// cards
 			cardsStart: ClassHub.#cardsStart,
@@ -91,7 +91,7 @@ export class ClassHub extends ApplicationV2 {
 		div.innerHTML = `<header class="hh">
 				<select class="who">${chars.map((c) => `<option value="${c.uuid}" ${c === a ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
 				<span class="res">MP <b>${mp(a).value}</b>/${mp(a).max}</span>
-				<nav>${tabs.map((t) => `<button type="button" class="${t.id === this.tabId ? 'on' : ''}" data-action="tab" data-tab="${t.id}"><i class="${t.icon}"></i> ${esc(t.name)}</button>`).join('')}</nav>
+				<nav>${tabs.map((t) => `<button type="button" class="${t.id === this.tabId ? 'on' : ''}" data-action="pickTab" data-tab="${t.id}"><i class="${t.icon}"></i> ${esc(t.name)}</button>`).join('')}</nav>
 			</header><section class="panel p-${this.tabId}">${panel}</section>`;
 		return div;
 	}

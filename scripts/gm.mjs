@@ -128,11 +128,13 @@ const OPS = {
 		return { ok: true };
 	},
 
-	async followPilot(pilot) {
-		const pt = pilot.getActiveTokens(false, true)[0];
-		if (!pt) return { ok: false };
+	/** Move the vehicle to its pilot. `at` is where the pilot's token is going (Foundry 13 moves tokens over time) */
+	async followPilot(pilot, p = {}) {
+		const doc = p.token ?? pilot.getActiveTokens(false, true)[0];
+		if (!doc) return { ok: false };
+		const pt = { x: p.at?.x ?? doc.x, y: p.at?.y ?? doc.y, width: doc.width, height: doc.height };
 		const embarked = !!pilot.system?.vehicle?.embarked;
-		for (const t of vehicleTokens(pilot, pt.parent)) await t.update(placeFor(pt, t.width, embarked), { fucmFollow: true });
+		for (const t of vehicleTokens(pilot, doc.parent)) await t.update(placeFor(pt, t.width, embarked), { fucmFollow: true });
 		return { ok: true };
 	},
 
@@ -206,6 +208,6 @@ export function installVehicleHooks() {
 		const actor = token.actor;
 		if (actor?.type !== 'character' || !actor.system?.vehicle?.embarked) return;
 		if (!vehicleTokens(actor, token.parent).length) return;
-		OPS.followPilot(actor);
+		OPS.followPilot(actor, { token, at: { x: changed.x ?? token.x, y: changed.y ?? token.y } });
 	});
 }

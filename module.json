@@ -1,0 +1,49 @@
+{
+  "id": "fu-class-mechanics",
+  "title": "Fabula Ultima Advanced Class Mechanics",
+  "description": "Dedicated tools for Project FU classes: the full Ace of Cards deck with set detection and Magic Cards, Pilot vehicles placed on the map that follow the pilot, Arcanist summon and dismiss, Mutant transformations, Symbolist symbols on creatures, Dancer dances, Chanter verses, Gourmet ingredients and cooking, Merchant Trade Points, Tinkerer gadgets, with animations.",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "George Sowidan"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "projectfu",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4.14.0"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "fu-shopmenu",
+        "type": "module",
+        "reason": "Merchants get a link to the shops."
+      },
+      {
+        "id": "fu-projects",
+        "type": "module",
+        "reason": "Tinkerers get a link to their projects."
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/class.css"
+  ],
+  "socket": true,
+  "url": "https://github.com/EclipseGS27/fu-class-mechanics",
+  "manifest": "https://raw.githubusercontent.com/EclipseGS27/fu-class-mechanics/main/module.json",
+  "download": "https://github.com/EclipseGS27/fu-class-mechanics/releases/download/v0.1.0/fu-class-mechanics.zip",
+  "bugs": "https://github.com/EclipseGS27/fu-class-mechanics/issues"
+}
